@@ -1,11 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { OrdersRepository } from 'src/shared/database/repositories/orders.repositories';
+import { RabbitMQService } from 'src/shared/services/rabbitmq.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Injectable()
 export class OrdersService {
-    constructor(private readonly ordersRepo: OrdersRepository) {}
+    constructor(
+        private readonly ordersRepo: OrdersRepository,
+        private readonly rabbitMQService: RabbitMQService,
+    ) {}
 
     create(createOrderDto: CreateOrderDto) {
         const { orderItems, ...orderData } = createOrderDto;
@@ -107,5 +111,20 @@ export class OrdersService {
                 id: orderId,
             },
         });
+    }
+
+    finalizeOrder(orderId: string) {
+        const emailPayload = {
+            to: 'luizbarbosa@alunos.utfpr.edu.br',
+            subject: 'Pedido finalizado!',
+            body: `Olá, seu pedido ${orderId} foi finalizado com sucesso!`,
+        };
+
+        this.rabbitMQService.publish(emailPayload);
+
+        return {
+            message:
+                'Pedido finalizado (simulado) e e-mail enfileirado com sucesso!',
+        };
     }
 }

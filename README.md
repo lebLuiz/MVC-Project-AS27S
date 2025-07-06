@@ -1,3 +1,6 @@
+## Projeto
+Esse projeto é para a disciplina de Arquitetura de Software da Faculdade, no momento encontra-se incompleto, contendo alguns problemas e bugs.
+
 ## Atenção
 Tanto para o projeto `api` quanto para o `app` utilizei o node `v20.*`, então recomendo que faça o mesmo.
 

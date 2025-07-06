@@ -46,4 +46,9 @@ export class OrdersController {
     remove(@Param('orderId', ParseUUIDPipe) orderId: string) {
         return this.ordersService.remove(orderId);
     }
+
+    @Post(':orderId/finalize')
+    finalizeOrder(@Param('orderId') orderId: string) {
+        return this.ordersService.finalizeOrder(orderId);
+    }
 }
