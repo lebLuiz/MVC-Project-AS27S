@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { OrdersRepository } from 'src/shared/database/repositories/orders.repositories';
-import { RabbitMQService } from 'src/shared/services/rabbitmq.service';
+import { UsersService } from '../users/users.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 
@@ -8,7 +9,8 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 export class OrdersService {
     constructor(
         private readonly ordersRepo: OrdersRepository,
-        private readonly rabbitMQService: RabbitMQService,
+        private readonly usersService: UsersService,
+        @Inject('ORDERS_SERVICE') private rabbitClient: ClientProxy,
     ) {}
 
     create(createOrderDto: CreateOrderDto) {
@@ -113,14 +115,18 @@ export class OrdersService {
         });
     }
 
-    finalizeOrder(orderId: string) {
+    async finalizeOrder(orderId: string, userId: string) {
+        const user = await this.usersService.getUserById(userId);
+        if (!user)
+            throw new NotFoundException('Usuário associado não encontrado.');
+
         const emailPayload = {
-            to: 'luizbarbosa@alunos.utfpr.edu.br',
+            to: user.email,
             subject: 'Pedido finalizado!',
             body: `Olá, seu pedido ${orderId} foi finalizado com sucesso!`,
         };
 
-        this.rabbitMQService.publish(emailPayload);
+        this.rabbitClient.emit('email-queue', emailPayload);
 
         return {
             message:

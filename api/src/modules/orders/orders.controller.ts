@@ -13,6 +13,7 @@ import {
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { ActiveUserId } from 'src/shared/decorators/ActiveUserId';
 
 @Controller('orders')
 export class OrdersController {
@@ -48,7 +49,10 @@ export class OrdersController {
     }
 
     @Post(':orderId/finalize')
-    finalizeOrder(@Param('orderId') orderId: string) {
-        return this.ordersService.finalizeOrder(orderId);
+    finalizeOrder(
+        @Param('orderId', ParseUUIDPipe) orderId: string,
+        @ActiveUserId() userId: string,
+    ) {
+        return this.ordersService.finalizeOrder(orderId, userId);
     }
 }
