@@ -129,8 +129,7 @@ export class OrdersService {
         this.rabbitmqService.sendEmail(emailPayload);
 
         return {
-            message:
-                'Pedido finalizado (simulado) e e-mail enfileirado com sucesso!',
+            message: `Pedido finalizado (simulado) e informações enviadas para o e-mail: ${user.email}!`,
         };
     }
 }
