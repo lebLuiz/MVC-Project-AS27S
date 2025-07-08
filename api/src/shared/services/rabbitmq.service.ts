@@ -1,30 +1,13 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import * as amqplib from 'amqplib';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientRMQ } from '@nestjs/microservices';
 
 @Injectable()
-export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
-    private connection: amqplib.ChannelModel;
-    private channel: amqplib.Channel;
-    private readonly queue = 'send_email_queue';
+export class RabbitmqService {
+    constructor(
+        @Inject('RABBITMQ_SERVICE') public readonly instance: ClientRMQ,
+    ) {}
 
-    async onModuleInit() {
-        this.connection = await amqplib.connect('amqp://localhost');
-        this.channel = await this.connection.createChannel();
-        await this.channel.assertQueue(this.queue, { durable: true });
-    }
-
-    async onModuleDestroy() {
-        await this.channel?.close();
-        await this.connection?.close();
-    }
-
-    publish(message: any) {
-        this.channel.sendToQueue(
-            this.queue,
-            Buffer.from(JSON.stringify(message)),
-            {
-                persistent: true,
-            },
-        );
+    sendEmail(emailPayload: any) {
+        this.instance.emit('email_send', emailPayload);
     }
 }

@@ -29,4 +29,15 @@ export default (httpClient: AxiosInstance) => ({
     });
     return response.data;
   },
+
+  async sendToEmail(token: string, id: string) {
+    const response = await httpClient.post(
+      `/orders/${id}/finalize`,
+      undefined,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return response.data;
+  },
 });
