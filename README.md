@@ -2,7 +2,7 @@
 Esse projeto é para a disciplina de Arquitetura de Software da Faculdade, no momento encontra-se incompleto, contendo alguns problemas e bugs.
 
 ## Atenção
-Tanto para o projeto `api` quanto para o `app` utilizei o node `v20.*`, então recomendo que faça o mesmo.
+Nos projetos `api`, `app` e `email-service` utilizei o node `v20.*`, então recomendo que faça o mesmo.
 
 ## Configurações iniciais - Siga passo a passo.
 Instale o CLI do [Nest](https://docs.nestjs.com) na sua máquina:
@@ -12,7 +12,13 @@ No projeto `api`, crie um arquivo `.env` na raiz do projeto, copie o conteúdo c
 
 No projeto `app`, crie um arquivo `.env` na raiz do projeto, copie o conteúdo contido em `.env.example` e cole em `.env`
 
-Tanto no projeto `api` quanto no `app`, execute `npm install`.
+No projeto `email-service`, crie um arquivo `.env` na raiz do projeto, copie o conteúdo contido em `.env.example` e cole em `.env`.
+Altere as informações necessárias, principalmente na variável `EMAIL_USER` e `EMAIL_PASS`.
+
+Acesse os projetos `api`, `app` e `email-service`, e execute `npm install`.
+
+Eu utilizei o **Docker** para executar o **PostgreSQL** e o **RabbitMQ**, então recomendo que utilize-o também.
+Para "subir" os serviços no docker, na raiz desse projeto execute: `docker compose up -d`
 
 ---
 ## Api (Back-End)
@@ -21,3 +27,6 @@ Após isso, execute `npm run start:dev` e a principio o projeto já é para ser 
 
 ## App (Front-End)
 No projeto `app`, execute `npm run dev` e a principio o projeto já é para ser executado tranquilamente.
+
+## EmailService (Consumidor RabbitMQ)
+No projeto `email-service`, execute `npm run start` e a principio o projeto já é para ser executado tranquilamente.
