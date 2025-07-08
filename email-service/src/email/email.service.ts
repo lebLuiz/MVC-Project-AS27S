@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import { Injectable } from '@nestjs/common';
+import { RmqContext } from '@nestjs/microservices';
 import * as nodemailer from 'nodemailer';
+import SendEmailDto from './dto/send-email.dto';
 
 @Injectable()
 export class EmailService {
@@ -13,6 +15,20 @@ export class EmailService {
             pass: process.env.EMAIL_PASS,
         },
     });
+
+    async handleSendEmail(data: SendEmailDto, context: RmqContext) {
+        if (!data.to || !data.subject || !data.body) {
+            throw new Error('Dados de email inválidos');
+        }
+
+        const channel = context.getChannelRef();
+        const originalMsg = context.getMessage();
+
+        console.log('📥 Mensagem recebida:', data);
+        await this.sendEmail(data.to, data.subject, data.body);
+
+        channel.ack(originalMsg);
+    }
 
     sendEmail(to: string, subject: string, body: string) {
         return this.transporter.sendMail({

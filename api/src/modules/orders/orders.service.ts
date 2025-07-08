@@ -1,16 +1,16 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { OrdersRepository } from 'src/shared/database/repositories/orders.repositories';
 import { UsersService } from '../users/users.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { RabbitmqService } from 'src/shared/services/rabbitmq.service';
 
 @Injectable()
 export class OrdersService {
     constructor(
         private readonly ordersRepo: OrdersRepository,
         private readonly usersService: UsersService,
-        @Inject('ORDERS_SERVICE') private rabbitClient: ClientProxy,
+        private readonly rabbitmqService: RabbitmqService,
     ) {}
 
     create(createOrderDto: CreateOrderDto) {
@@ -126,7 +126,7 @@ export class OrdersService {
             body: `Olá, seu pedido ${orderId} foi finalizado com sucesso!`,
         };
 
-        this.rabbitClient.emit('email.send', JSON.stringify(emailPayload));
+        this.rabbitmqService.sendEmail(emailPayload);
 
         return {
             message:
