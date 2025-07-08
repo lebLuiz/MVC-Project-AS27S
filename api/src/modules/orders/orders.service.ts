@@ -126,7 +126,7 @@ export class OrdersService {
             body: `Olá, seu pedido ${orderId} foi finalizado com sucesso!`,
         };
 
-        this.rabbitClient.emit('email-queue', emailPayload);
+        this.rabbitClient.emit('email.send', JSON.stringify(emailPayload));
 
         return {
             message:

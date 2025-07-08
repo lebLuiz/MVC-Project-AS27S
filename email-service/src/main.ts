@@ -10,7 +10,9 @@ async function bootstrap() {
             transport: Transport.RMQ,
             options: {
                 urls: ['amqp://localhost:5672'],
-                queue: 'email-queue',
+                queue: 'email.queue',
+                exchange: 'email_exchange',
+                routingKey: 'email.send',
                 queueOptions: {
                     durable: true,
                 },

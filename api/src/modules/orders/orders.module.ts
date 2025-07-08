@@ -12,7 +12,8 @@ import { UsersService } from '../users/users.service';
                 transport: Transport.RMQ,
                 options: {
                     urls: ['amqp://localhost:5672'],
-                    queue: 'email-queue',
+                    queue: 'email.queue',
+                    exchange: 'email_exchange',
                     queueOptions: {
                         durable: true,
                     },
